@@ -1,30 +1,27 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { CssBaseline } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
+import actionTypes from './action-types';
+import App from './App';
 import Store from './Store';
-import { AppBar, Browser, Viewer } from './components';
 
-/**
- * App Component
- */
-const App = ({ classes }) => (
-  <Store>
-    <div className={classes.root}>
-      <CssBaseline />
-      <AppBar />
-      <Browser />
-      <Viewer />
-    </div>
-  </Store>
-);
-
-const styles = theme => ({
-  root: {
-    display: 'flex',
-  },
+const mapStateToProps = state => ({
+  electron: state.electron,
 });
 
-const StyledApp = withStyles(styles)(App);
+const mapDispatchToProps = dispatch => ({
+  setWindowSize: (width, height) => dispatch({
+    type: actionTypes.SET_WINDOW_SIZE,
+    payload: { width, height },
+  }),
+});
 
-render(<StyledApp />, document.getElementById('react-root'));
+
+const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App);
+
+render(
+  <Store>
+    <ConnectedApp />
+  </Store>,
+  document.getElementById('react-root'),
+);

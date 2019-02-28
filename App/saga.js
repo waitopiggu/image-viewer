@@ -1,6 +1,6 @@
-import { all, call, put, race, takeLatest } from 'redux-saga/effects';
+import { all, call, put, race, select, takeLatest } from 'redux-saga/effects';
 import mime from 'mime-types';
-import { filesystem } from './lib';
+import { electron, filesystem } from './lib';
 import actionTypes from './action-types';
 
 function* fileStat(directory, filename) {
@@ -70,6 +70,19 @@ function* parentDirectory(action) {
   }
 }
 
+function* setElectronWindowSize(action) {
+  const { width, height } = yield select(state => state.electron);
+  if (width && height) {
+    try {
+      const currentWindow = electron.getCurrentWindow();
+      currentWindow.setSize(width, height);
+      yield put({ type: actionTypes.SET_WINDOW_SIZE_SUCCESS });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+}
+
 export default function* () {
   yield all([
     takeLatest(
@@ -77,5 +90,6 @@ export default function* () {
       listDirectory,
     ),
     takeLatest(actionTypes.PARENT_DIRECTORY, parentDirectory),
+    takeLatest(actionTypes.PERSIST_REHYDRATE, setElectronWindowSize),
   ]);
 }

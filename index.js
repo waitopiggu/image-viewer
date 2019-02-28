@@ -1,24 +1,30 @@
 const { app, BrowserWindow } = require('electron');
 
-const {
-  default: installExtension, REDUX_DEVTOOLS,
-} = require('electron-devtools-installer');
-
 let win
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 1440,
-    height: 900,
+    width: 1024,
+    height: 800,
+    minWidth: 1024,
+    minHeight: 800,
     webPreferences: {
       nodeIntegration: true,
     },
   });
   win.loadFile('public/index.html');
-  win.webContents.openDevTools();
   win.on('closed', () => win = null);
 
-  installExtension(REDUX_DEVTOOLS).then(console.log, console.error);
+  if (process.argv[2] !== 'production') {
+    win.webContents.openDevTools();
+    const {
+      default: installExtension,
+      REDUX_DEVTOOLS,
+    } = require('electron-devtools-installer');
+    installExtension(REDUX_DEVTOOLS).then(console.log, console.error);
+  } else {
+    win.setMenu(null);
+  }
 }
 
 app.on('ready', createWindow);

@@ -2,6 +2,35 @@ import { combineReducers } from 'redux';
 import actionTypes from './action-types';
 import { filesystem } from './lib';
 
+function directory(state = filesystem.homedir, action) {
+  switch (action.type) {
+    case actionTypes.CHANGE_DIRECTORY: {
+      const { path } = action.payload;
+      return path;
+    }
+    default: {
+      return state;
+    }
+  }
+}
+
+const electronInitialState = {
+  width: 1440,
+  height: 900,
+};
+
+function electron(state = electronInitialState, action) {
+  switch (action.type) {
+    case actionTypes.SET_WINDOW_SIZE: {
+      const { width, height } = action.payload;
+      return { ...state, width, height };
+    }
+    default: {
+      return state;
+    }
+  }
+}
+
 function file(state = {}, action) {
   switch (action.type) {
     case actionTypes.SET_FILE: {
@@ -19,18 +48,6 @@ function files(state = [], action) {
     case actionTypes.SET_FILES: {
       const { files } = action.payload;
       return [...files];
-    }
-    default: {
-      return state;
-    }
-  }
-}
-
-function directory(state = filesystem.homedir, action) {
-  switch (action.type) {
-    case actionTypes.CHANGE_DIRECTORY: {
-      const { path } = action.payload;
-      return path;
     }
     default: {
       return state;
@@ -60,8 +77,9 @@ function videoPrefs(state = videoPrefsInitialState, action) {
 }
 
 export default combineReducers({
+  directory,
+  electron,
   file,
   files,
-  directory,
   videoPrefs,
 });

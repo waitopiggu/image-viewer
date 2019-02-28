@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Grid, IconButton, Toolbar } from '@material-ui/core';
+import { Grid, IconButton, Toolbar, Tooltip } from '@material-ui/core';
 import Slider from '@material-ui/lab/Slider';
 import {
   KeyboardArrowLeft,
@@ -15,6 +15,7 @@ import {
   VolumeOff,
   VolumeUp,
 } from '@material-ui/icons';
+import { format } from '../../../lib';
 
 const MAX_PLAYBACK_RATE = 2;
 const MIN_PLAYBACK_RATE = 0.25;
@@ -52,8 +53,11 @@ const Controls = ({
   playbackRate,
   volume,
 }: Props) => (
-  <React.Fragment>
-    <Slider max={duration} onChange={onSeek} value={currentTime} />
+  <Tooltip
+    title={`${format.hhmmss(currentTime)}${
+      playbackRate > 1 || playbackRate < 1 ? ` * ${playbackRate}` : ''
+    }`}
+  >
     <Toolbar disableGutters>
       <Grid
         alignItems="center"
@@ -61,6 +65,9 @@ const Controls = ({
         direction="row"
         justify="space-between"
       >
+        <Grid item xs={12} container direction="row" justify="center">
+          <Slider max={duration} onChange={onSeek} value={currentTime} />
+        </Grid>
         <Grid item xs={3}>
           <IconButton
             color={playDir ? 'primary' : 'default'}
@@ -103,7 +110,7 @@ const Controls = ({
             <SkipNext />
           </IconButton>
         </Grid>
-        <Grid container item xs={3}s alignItems="center" justify="flex-end">
+        <Grid container item xs={3} alignItems="center" justify="flex-end">
           <div className={classes.volumeContainer}>
             <Slider
               max={1}
@@ -119,7 +126,7 @@ const Controls = ({
         </Grid>
       </Grid>
     </Toolbar>
-  </React.Fragment>
+  </Tooltip>
 );
 
 const styles = theme => ({

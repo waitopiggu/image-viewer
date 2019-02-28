@@ -89,11 +89,11 @@ class Browser extends React.PureComponent<Props> {
                 </ListItemIcon>
               ) : (
                 <ListItemAvatar>
-                  <Avatar>
+                  <Avatar className={classes.avatar}>
                     {file.isImage ? (
-                      <img className={classes.avatar} src={file.path} />
+                      <img className={classes.media} src={file.path} />
                     ) : (
-                      <video className={classes.avatar} src={file.path} />
+                      <video className={classes.media} src={file.path} />
                     )}
                   </Avatar>
                 </ListItemAvatar>
@@ -126,8 +126,8 @@ const styles = theme => {
   }
   return {
     avatar: {
-      objectFit: 'contain',
-      height: 'inherit',
+      background: 0,
+      borderRadius: theme.shape.borderRadius,
     },
     drawer,
     drawerPaper: {
@@ -148,6 +148,11 @@ const styles = theme => {
     listItemTextPrimary: {
       overflow: 'hidden',
       textOverflow: 'ellipsis',
+    },
+    media: {
+      objectFit: 'contain',
+      width: 'inherit',
+      height: 'inherit',
     },
   };
 };
