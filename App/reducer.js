@@ -45,9 +45,12 @@ function file(state = {}, action) {
 
 function files(state = [], action) {
   switch (action.type) {
+    case actionTypes.CHANGE_DIRECTORY: {
+      return [];
+    }
     case actionTypes.SET_FILES: {
       const { files } = action.payload;
-      return [...files];
+      return files;
     }
     default: {
       return state;

@@ -11,7 +11,7 @@ import {
   Toolbar,
   Typography,
 } from '@material-ui/core';
-import { ArrowUpward, Folder, Refresh } from '@material-ui/icons';
+import { ArrowUpward, Folder, InsertDriveFile, Refresh } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import { filesystem } from '../../lib';
 
@@ -19,6 +19,7 @@ type Props = {
   changeDirectory: Function,
   classes: any,
   directory: string,
+  fileIndex: number,
   files: Array<any>,
   parentDirectory: Function,
   setFile: Function,
@@ -56,7 +57,7 @@ class Browser extends React.PureComponent<Props> {
   };
 
   render() {
-    const { classes, files } = this.props;
+    const { classes, fileIndex, files } = this.props;
     return (
       <div>
         <Toolbar>
@@ -82,6 +83,7 @@ class Browser extends React.PureComponent<Props> {
               className={classes.listItem}
               key={file.filename}
               onClick={this.handleListItemCLick(file)}
+              selected={file.index === fileIndex}
             >
               {!(file.isImage || file.isVideo) ? (
                 <ListItemIcon>

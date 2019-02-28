@@ -1,12 +1,11 @@
 import React from 'react';
 import { isEqual } from 'lodash';
-import { withStyles } from '@material-ui/core/styles';
 import Controls from './Controls';
 
 type Props = {
   classes: any,
+  contentClass: any,
   file: any,
-  files: Array<any>,
   setFile: Function,
   setVideoPrefs: Function,
   videoPrefs: any,
@@ -37,17 +36,8 @@ class Video extends React.Component<Props, State> {
   };
 
   handleFileChange = (direction) => () => {
-    const { file, files, setFile } = this.props;
-    const { index } = file;
-    if (direction === 'next') {
-      const nextIndex = index === 0 ? files.length - 1 : index - 1;
-      const nextFile = files[nextIndex];
-      setFile(nextFile);
-    } else if (direction === 'previous') {
-      const previousIndex = index === files.length - 1 ? 0 : index + 1;
-      const previousFile = files[previousIndex];
-      setFile(previousFile);
-    }
+    const { nextFile } = this.props;
+    nextFile(direction);
   };
 
   handlePrefsChange = (name, value = 0) => (event, targetValue) => {
@@ -92,11 +82,11 @@ class Video extends React.Component<Props, State> {
 
   render() {
     const { videoElement } = this.state;
-    const { classes, file, videoPrefs } = this.props;
+    const { classes, contentClass, file, videoPrefs } = this.props;
     return (
-      <div className={classes.root}>
+      <React.Fragment>
         <video
-          className={classes.video}
+          className={contentClass}
           onEnded={this.onEnded}
           onLoadedMetadata={this.onUpdate}
           onLoadStart={this.onLoadStart}
@@ -115,31 +105,9 @@ class Video extends React.Component<Props, State> {
             paused={videoElement.paused}
           />
         )}
-      </div>
+      </React.Fragment>
     );
   }
 }
 
-const styles = theme => {
-  const padding = theme.spacing.unit * 2;
-  const { toolbar } = theme.mixins;
-  const video = {
-    width: '100%',
-    height: `calc(100vh - ${toolbar.minHeight * 2}px - ${padding * 2}px)`,
-  };
-  for (const [key, value] of Object.entries(toolbar)) {
-    if (typeof value === 'object') {
-      video[key] = {
-        height: `calc(100vh - ${toolbar[key].minHeight * 2}px - ${padding * 2}px)`,
-      };
-    }
-  }
-  return {
-    root: {
-      padding,
-    },
-    video,
-  };
-};
-
-export default withStyles(styles)(Video);
+export default Video;

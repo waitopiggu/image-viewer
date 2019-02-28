@@ -12,7 +12,7 @@ const createElectronStorage  = window.require('redux-persist-electron-storage');
 const persistConfig = {
   key: 'root',
   storage: createElectronStorage(),
-  blacklist: ['files'],
+  blacklist: ['file', 'files'],
 };
 
 const sagaMiddleware = createSagaMiddleware();

@@ -1,10 +1,9 @@
 import { connect } from 'react-redux';
 import actionTypes from '../../../action-types';
-import Video from './Video';
+import Image from './Image';
 
 const mapStateToProps = state => ({
   file: state.file,
-  videoPrefs: state.videoPrefs,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -12,10 +11,6 @@ const mapDispatchToProps = dispatch => ({
     type: actionTypes.NEXT_FILE,
     payload: { direction },
   }),
-  setVideoPrefs: preferences => dispatch({
-    type: actionTypes.SET_VIDEO_PREFS,
-    payload: { preferences },
-  }),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Video);
+export default connect(mapStateToProps, mapDispatchToProps)(Image);

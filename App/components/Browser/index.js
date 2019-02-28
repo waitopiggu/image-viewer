@@ -4,6 +4,7 @@ import Browser from './Browser';
 
 const mapStateToProps = state => ({
   directory: state.directory,
+  fileIndex: state.file.index,
   files: state.files,
 });
 

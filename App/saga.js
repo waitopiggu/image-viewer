@@ -1,4 +1,6 @@
-import { all, call, put, race, select, takeLatest } from 'redux-saga/effects';
+import {
+  all, call, put, race, select, takeEvery, takeLatest,
+} from 'redux-saga/effects';
 import mime from 'mime-types';
 import { electron, filesystem } from './lib';
 import actionTypes from './action-types';
@@ -83,6 +85,25 @@ function* setElectronWindowSize(action) {
   }
 }
 
+function* setNextFile(action) {
+  const { direction } = action.payload;
+  try {
+    const { file, files } = yield select(state => state);
+    const { index } = file;
+    const next = direction === 'next' ? (
+      files[index === files.length - 1 ? 0 : index + 1]
+    ) : (
+      files[index === 0 ? files.length - 1 : index - 1]
+    );
+    yield put({
+      type: actionTypes.SET_FILE,
+      payload: { file: next },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export default function* () {
   yield all([
     takeLatest(
@@ -91,5 +112,6 @@ export default function* () {
     ),
     takeLatest(actionTypes.PARENT_DIRECTORY, parentDirectory),
     takeLatest(actionTypes.PERSIST_REHYDRATE, setElectronWindowSize),
+    takeLatest(actionTypes.NEXT_FILE, setNextFile),
   ]);
 }
