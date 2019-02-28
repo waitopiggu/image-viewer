@@ -1,12 +1,17 @@
 import React from 'react';
 import mime from 'mime-types';
 import {
+  Avatar,
   Drawer,
+  IconButton,
   ListItem,
+  ListItemAvatar,
   ListItemText,
   ListItemIcon,
+  Toolbar,
+  Typography,
 } from '@material-ui/core';
-import { ArrowUpward, Folder, InsertDriveFile } from '@material-ui/icons';
+import { ArrowUpward, Folder, Refresh } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import { filesystem } from '../../lib';
 
@@ -30,69 +35,121 @@ class Browser extends React.PureComponent<Props> {
     if (file.isUp) {
       const { directory, parentDirectory } = this.props;
       parentDirectory(directory);
+      this.scrollTop();
+    } else if (file.isRefresh) {
+      const { changeDirectory, directory } = this.props;
+      changeDirectory(directory);
+      this.scrollTop();
     } else if (file.isDirectory) {
       const { changeDirectory } = this.props;
       changeDirectory(file.path);
+      this.scrollTop();
     } else {
       const { setFile } = this.props;
       setFile(file);
     }
   };
 
+  scrollTop = () => {
+    const paper = document.getElementById('browser-drawer-paper');
+    paper.scrollTop = 0;
+  };
+
   render() {
     const { classes, files } = this.props;
     return (
-      <Drawer
-        variant="permanent"
-        className={classes.drawer}
-        classes={{ paper: classes.drawerPaper }}
-      >
-        <ListItem
-          button
-          className={classes.listItem}
-          onClick={this.handleListItemCLick({ isUp: true })}
+      <div>
+        <Toolbar>
+          <IconButton onClick={this.handleListItemCLick({ isUp: true })}>
+            <ArrowUpward />
+          </IconButton>
+          <Typography className={classes.grow}>
+            {`${files.length} items`}
+          </Typography>
+          <IconButton onClick={this.handleListItemCLick({ isRefresh: true })}>
+            <Refresh />
+          </IconButton>
+        </Toolbar>
+        <Drawer
+          className={classes.drawer}
+          classes={{ paper: classes.drawerPaper }}
+          PaperProps={{ id: 'browser-drawer-paper' }}
+          variant="permanent"
         >
-          <ListItemIcon><ArrowUpward /></ListItemIcon>
-          <ListItemText>..</ListItemText>
-        </ListItem>
-        {files.map(file => (
-          <ListItem
-            button
-            className={classes.listItem}
-            key={file.filename}
-            onClick={this.handleListItemCLick(file)}
-          >
-            <ListItemIcon>
-              {file.isDirectory ? <Folder /> : <InsertDriveFile />}
-            </ListItemIcon>
-            <ListItemText classes={{ primary: classes.listItemTextPrimary }}>
-              {file.filename}
-            </ListItemText>
-          </ListItem>
-        ))}
-      </Drawer>
+          {files.map(file => (
+            <ListItem
+              button
+              className={classes.listItem}
+              key={file.filename}
+              onClick={this.handleListItemCLick(file)}
+            >
+              {!(file.isImage || file.isVideo) ? (
+                <ListItemIcon>
+                  {file.isDirectory ? <Folder /> : <InsertDriveFile />}
+                </ListItemIcon>
+              ) : (
+                <ListItemAvatar>
+                  <Avatar>
+                    {file.isImage ? (
+                      <img className={classes.avatar} src={file.path} />
+                    ) : (
+                      <video className={classes.avatar} src={file.path} />
+                    )}
+                  </Avatar>
+                </ListItemAvatar>
+              )}
+              <ListItemText classes={{ primary: classes.listItemTextPrimary }}>
+                {file.filename}
+              </ListItemText>
+            </ListItem>
+          ))}
+        </Drawer>
+      </div>
     );
   }
 }
 
-const styles = theme => ({
-  drawer: {
-    height: '100vh',
-    overflowY: 'auto',
-  },
-  drawerPaper: {
-    position: 'relative',
-    whiteSpace: 'nowrap',
-    width: 300,
-  },
-  listItem: {
-    maxHeight: 40,
-    minHeight: 40,
-  },
-  listItemTextPrimary: {
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-  },
-});
+const styles = theme => {
+  const padding = theme.spacing.unit * 2;
+  const { toolbar } = theme.mixins;
+  const drawer = {
+    overflow: 'auto',
+    width: '100%',
+    height: `calc(100vh - ${toolbar.minHeight}px)`,
+  };
+  for (const [key, value] of Object.entries(toolbar)) {
+    if (typeof value === 'object') {
+      drawer[key] = {
+        height: `calc(100vh - ${toolbar[key].minHeight}px)`,
+      };
+    }
+  }
+  return {
+    avatar: {
+      objectFit: 'contain',
+      height: 'inherit',
+    },
+    drawer,
+    drawerPaper: {
+      position: 'relative',
+      whiteSpace: 'nowrap',
+      width: 300,
+      '&::-webkit-scrollbar': {
+        display: 'none',
+      },
+    },
+    grow: {
+      flexGrow: 1,
+    },
+    listItem: {
+      maxHeight: 56,
+      minHeight: 56,
+    },
+    listItemTextPrimary: {
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+    },
+  };
+};
 
 export default withStyles(styles)(Browser);

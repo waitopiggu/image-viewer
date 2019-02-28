@@ -3,6 +3,8 @@ import { withStyles } from '@material-ui/core/styles';
 import { Grid, IconButton, Toolbar } from '@material-ui/core';
 import Slider from '@material-ui/lab/Slider';
 import {
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
   Pause,
   PlayArrow,
   PlayCircleFilled,
@@ -13,6 +15,9 @@ import {
   VolumeOff,
   VolumeUp,
 } from '@material-ui/icons';
+
+const MAX_PLAYBACK_RATE = 2;
+const MIN_PLAYBACK_RATE = 0.25;
 
 type Props = {
   autoplay: boolean,
@@ -27,6 +32,7 @@ type Props = {
   onSeek: Function,
   paused: boolean,
   playDir: boolean,
+  playbackRate: number,
   volume: number,
 };
 
@@ -43,19 +49,19 @@ const Controls = ({
   onSeek,
   paused,
   playDir,
+  playbackRate,
   volume,
 }: Props) => (
   <React.Fragment>
     <Slider max={duration} onChange={onSeek} value={currentTime} />
-    <Toolbar>
+    <Toolbar disableGutters>
       <Grid
         alignItems="center"
         container
         direction="row"
         justify="space-between"
-        spacing={24}
       >
-        <Grid item xs>
+        <Grid item xs={3}>
           <IconButton
             color={playDir ? 'primary' : 'default'}
             onClick={handlePrefsChange('playDir', !playDir)}
@@ -74,23 +80,30 @@ const Controls = ({
             <Repeat />
           </IconButton>
         </Grid>
-        <Grid item xs>
+        <Grid container item xs={6} justify="center">
           <IconButton onClick={handleFileChange('previous')}>
             <SkipPrevious />
           </IconButton>
+          <IconButton onClick={handlePrefsChange(
+            'playbackRate',
+            Math.max(MIN_PLAYBACK_RATE, playbackRate - 0.25),
+          )}>
+            <KeyboardArrowLeft />
+          </IconButton>
           <IconButton onClick={onTogglePlay}>
             {paused ? <PlayArrow /> : <Pause />}
+          </IconButton>
+          <IconButton onClick={handlePrefsChange(
+            'playbackRate',
+            Math.min(MAX_PLAYBACK_RATE, playbackRate + 0.25),
+          )}>
+            <KeyboardArrowRight />
           </IconButton>
           <IconButton onClick={handleFileChange('next')}>
             <SkipNext />
           </IconButton>
         </Grid>
-        <Grid container item xs alignItems="center">
-          <IconButton
-            onClick={handlePrefsChange('muted', !muted)}
-          >
-            {muted ? <VolumeOff /> : <VolumeUp />}
-          </IconButton>
+        <Grid container item xs={3}s alignItems="center" justify="flex-end">
           <div className={classes.volumeContainer}>
             <Slider
               max={1}
@@ -98,6 +111,11 @@ const Controls = ({
               value={volume}
             />
           </div>
+          <IconButton
+            onClick={handlePrefsChange('muted', !muted)}
+          >
+            {muted ? <VolumeOff /> : <VolumeUp />}
+          </IconButton>
         </Grid>
       </Grid>
     </Toolbar>
@@ -107,7 +125,7 @@ const Controls = ({
 const styles = theme => ({
   volumeContainer: {
     display: 'inline-flex',
-    width: 128,
+    width: 96,
     padding: theme.spacing.unit * 2,
   },
 });

@@ -40,6 +40,7 @@ function directory(state = filesystem.homedir, action) {
 
 const videoPrefsInitialState = {
   autoplay: false,
+  playbackRate: 1,
   playDir: false,
   loop: false,
   muted: false,

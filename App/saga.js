@@ -22,14 +22,27 @@ function* listDirectory(action) {
     const visible = dir.filter(file => !(/(^|\/)\.[^\/\.]/g).test(file));
     if (dir && visible) {
       const files = [];
-      for (let index = 0; index < visible.length; index++) {
-        const file = yield call(fileStat, path, visible[index]);
-        if (file) files.push({ ...file, index });
+      let firstMediaIndex = -1;
+      for (let filename of visible) {
+        const file = yield call(fileStat, path, filename);
+        if (file) {
+          const index = files.length;
+          files.push({ ...file, index });
+          if (firstMediaIndex < 0 && (file.isImage || file.isVideo)) {
+            firstMediaIndex = index;
+          }
+        }
       }
       yield put({
         type: actionTypes.SET_FILES,
         payload: { files },
       });
+      if (firstMediaIndex >= 0) {
+        yield put({
+          type: actionTypes.SET_FILE,
+          payload: { file: files[firstMediaIndex] },
+        });
+      }
     }
   } catch (error) {
     console.error(error);

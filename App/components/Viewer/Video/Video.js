@@ -31,6 +31,7 @@ class Video extends React.Component<Props, State> {
     videoElement.autoplay = videoPrefs.autoplay;
     videoElement.loop = videoPrefs.loop;
     videoElement.muted = videoPrefs.muted;
+    videoElement.playbackRate = videoPrefs.playbackRate;
     videoElement.volume = videoPrefs.volume;
     this.setState({ videoElement });
   };
@@ -119,13 +120,26 @@ class Video extends React.Component<Props, State> {
   }
 }
 
-const styles = theme => ({
-  root: {
-    padding: theme.spacing.unit * 2,
-  },
-  video: {
+const styles = theme => {
+  const padding = theme.spacing.unit * 2;
+  const { toolbar } = theme.mixins;
+  const video = {
     width: '100%',
-  },
-});
+    height: `calc(100vh - ${toolbar.minHeight * 2}px - ${padding * 2}px)`,
+  };
+  for (const [key, value] of Object.entries(toolbar)) {
+    if (typeof value === 'object') {
+      video[key] = {
+        height: `calc(100vh - ${toolbar[key].minHeight * 2}px - ${padding * 2}px)`,
+      };
+    }
+  }
+  return {
+    root: {
+      padding,
+    },
+    video,
+  };
+};
 
 export default withStyles(styles)(Video);

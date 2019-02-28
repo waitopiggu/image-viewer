@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import Video from './Video';
 
@@ -6,31 +7,35 @@ type Props = {
   file: any,
 };
 
-class Viewer extends React.PureComponent<Props, State> {
-
-  render() {
-    const { classes, file } = this.props;
-    return (
-      <div className={classes.root}>
-        {file.isVideo ? (
-          <Video />
-        ) : (
-          <img
-            className={classes.content}
-            src={file.path}
-          />
-        )}
-      </div>
-    );
-  }
-}
+const Viewer = ({ classes, file }: Props) => (
+  <div className={classNames([
+    classes.root,
+    file.isImage ? classes.overflowAuto : classes.overflowHidden,
+  ])}>
+    <div className={classes.toolbar} />
+    {file.isVideo && <Video />}
+    {file.isImage && <img className={classes.image} src={file.path} />}
+  </div>
+);
 
 const styles = theme => ({
+  image: {
+    width: '100%',
+  },
+  overflowAuto: {
+    overflow: 'auto',
+  },
+  overflowHidden: {
+    overflow: 'hidden',
+  },
   root: {
     flexGrow: 1,
     height: '100vh',
-    overflowX: 'hidden',
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
   },
+  toolbar: theme.mixins.toolbar,
 })
 
 export default withStyles(styles)(Viewer);
