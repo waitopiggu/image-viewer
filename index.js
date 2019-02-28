@@ -1,6 +1,6 @@
 const { app, BrowserWindow } = require('electron');
 
-let win
+let win = null;
 
 function createWindow() {
   win = new BrowserWindow({
@@ -15,7 +15,7 @@ function createWindow() {
   win.loadFile('public/index.html');
   win.on('closed', () => win = null);
 
-  if (process.argv[2] !== 'production') {
+  if (process.argv[2] === 'development') {
     win.webContents.openDevTools();
     const {
       default: installExtension,

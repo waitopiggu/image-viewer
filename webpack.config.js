@@ -8,6 +8,9 @@ const config = {
     'babel-polyfill',
     path.resolve(__dirname, 'App/index.js'),
   ],
+  externals: {
+    electron: 'require("electron")',
+  },
   module: {
     rules: [
       {

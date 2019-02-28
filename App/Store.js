@@ -3,15 +3,17 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, compose, createStore } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
+import createElectronStorage from 'redux-persist-electron-storage';
+import ElectronStore from 'electron-store';
 import createSagaMiddleware from 'redux-saga';
 import reducer from './reducer';
 import saga from './saga';
 
-const createElectronStorage  = window.require('redux-persist-electron-storage');
+const electronStore = new ElectronStore();
 
 const persistConfig = {
   key: 'root',
-  storage: createElectronStorage(),
+  storage: createElectronStorage({ electronStore }),
   blacklist: ['file', 'files'],
 };
 
