@@ -1,16 +1,18 @@
 {
   "name": "image-viewer",
   "description": "Image Viewer",
+  "author": {
+    "name": "Waito Piggu"
+  },
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
     "start": "electron . development",
     "clean": "rm -rf public/",
-    "copy": "cp index.js .bin/resources/app/ && cp -Rf public/ .bin/resources/app/",
-    "build": "yarn clean && yarn webpack-prod && yarn copy",
+    "build": "sh ./scripts/build.sh",
     "webpack-dev": "node node_modules/webpack/bin/webpack --mode=development --watch",
-    "webpack-prod": "node node_modules/webpack/bin/webpack --production"
+    "webpack-prod": "node node_modules/webpack/bin/webpack --mode=production"
   },
   "dependencies": {
     "@material-ui/core": "^3.9.2",
