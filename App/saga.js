@@ -17,7 +17,7 @@ function* fileStat(directory, filename) {
   }
 }
 
-function* listDirectory(action) {
+function* listDirectoryFiles(action) {
   const { path } = action.payload;
   try {
     let dir = yield call(filesystem.readdir, path);
@@ -72,16 +72,15 @@ function* parentDirectory(action) {
   }
 }
 
-function* setElectronWindowSize(action) {
+function* setElectronPrefs(action) {
   const { width, height } = yield select(state => state.electron);
-  if (width && height) {
-    try {
-      const currentWindow = electron.getCurrentWindow();
-      currentWindow.setSize(width, height);
-      yield put({ type: actionTypes.SET_WINDOW_SIZE_SUCCESS });
-    } catch (error) {
-      console.error(error);
-    }
+  try {
+    const currentWindow = electron.getCurrentWindow();
+    currentWindow.setSize(width, height);
+    currentWindow.show();
+    yield put({ type: actionTypes.SET_WINDOW_SIZE_SUCCESS });
+  } catch (error) {
+    console.error(error);
   }
 }
 
@@ -107,11 +106,11 @@ function* setNextFile(action) {
 export default function* () {
   yield all([
     takeLatest(
-      [actionTypes.CHANGE_DIRECTORY, actionTypes.LIST_DIRECTORY],
-      listDirectory,
+      actionTypes.CHANGE_DIRECTORY,
+      listDirectoryFiles,
     ),
     takeLatest(actionTypes.PARENT_DIRECTORY, parentDirectory),
-    takeLatest(actionTypes.PERSIST_REHYDRATE, setElectronWindowSize),
+    takeLatest(actionTypes.PERSIST_REHYDRATE, setElectronPrefs),
     takeLatest(actionTypes.NEXT_FILE, setNextFile),
   ]);
 }

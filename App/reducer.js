@@ -2,6 +2,22 @@ import { combineReducers } from 'redux';
 import actionTypes from './action-types';
 import { filesystem } from './lib';
 
+const appInitialState = {
+
+};
+
+function app(state = appInitialState, action) {
+  switch (action.type) {
+    case actionTypes.CHANGE_DIRECTORY: {
+      const { path } = action.payload;
+      return path;
+    }
+    default: {
+      return state;
+    }
+  }
+}
+
 function directory(state = filesystem.homedir, action) {
   switch (action.type) {
     case actionTypes.CHANGE_DIRECTORY: {
