@@ -94,7 +94,7 @@ const videoPrefsInitialState = {
   autoplay: false,
   fit: false,
   playbackRate: 1,
-  playDir: false,
+  playAll: false,
   loop: false,
   muted: false,
   shuffle: false,

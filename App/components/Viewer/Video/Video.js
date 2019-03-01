@@ -45,16 +45,7 @@ class Video extends React.Component<Props, State> {
     this.setState({ videoElement });
   };
 
-  handleFileChange = (direction) => () => {
-    const { videoPrefs } = this.props;
-    if (videoPrefs.shuffle) {
-      const { randomFile } = this.props;
-      randomFile();
-    } else {
-      const { nextFile } = this.props;
-      nextFile(direction);
-    }
-  };
+  handleFileChange = (direction) => this.onFileChange;
 
   handlePrefsChange = (name, value = 0) => (event, targetValue) => {
     const { setVideoPrefs } = this.props;
@@ -63,10 +54,21 @@ class Video extends React.Component<Props, State> {
 
   onEnded = () => {
     const { videoPrefs } = this.props;
-    if (!videoPrefs.loop && videoPrefs.playDir) {
-      this.handleFileChange('next');
+    if (!videoPrefs.loop && videoPrefs.playAll) {
+      this.onFileChange('next');
     } else {
       this.onUpdate();
+    }
+  };
+
+  onFileChange = (direction) => {
+    const { videoPrefs } = this.props;
+    if (videoPrefs.shuffle) {
+      const { randomFile } = this.props;
+      randomFile();
+    } else {
+      const { nextFile } = this.props;
+      nextFile(direction);
     }
   };
 

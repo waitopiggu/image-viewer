@@ -14,7 +14,7 @@ type Props = {
   onClose: Function,
   open: boolean,
   loop: boolean,
-  playDir: boolean,
+  playAll: boolean,
   shuffle: boolean,
 };
 
@@ -27,13 +27,13 @@ const Menu = ({
   onClose,
   open,
   loop,
-  playDir,
+  playAll,
   shuffle,
 }: Props) => {
   const onAutoplay = handlePrefsChange('autoplay', !autoplay);
   const onFit = handlePrefsChange('fit', !fit);
   const onLoop = handlePrefsChange('loop', !loop);
-  const onPlayDir = handlePrefsChange('playDir', !playDir);
+  const onPlayDir = handlePrefsChange('playAll', !playAll);
   const onShuffle = handlePrefsChange('shuffle', !shuffle);
   return (
     <MuiMenu
@@ -63,7 +63,7 @@ const Menu = ({
       <MenuItem onClick={onPlayDir}>
         <ListItemText primary="Play all" />
         <ListItemSecondaryAction>
-          <Switch checked={playDir} onChange={onPlayDir} />
+          <Switch checked={playAll} onChange={onPlayDir} />
         </ListItemSecondaryAction>
       </MenuItem>
       <MenuItem onClick={onShuffle}>
