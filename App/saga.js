@@ -84,6 +84,20 @@ function* setElectronPrefs(action) {
   }
 }
 
+function* randomFile() {
+  try {
+    const { files } = yield select(state => state);
+    const index = Math.floor(Math.random() * files.length);
+    const next = files[index];
+    yield put({
+      type: actionTypes.SET_FILE,
+      payload: { file: next },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 function* setNextFile(action) {
   const { direction } = action.payload;
   try {
@@ -112,5 +126,6 @@ export default function* () {
     takeLatest(actionTypes.PARENT_DIRECTORY, parentDirectory),
     takeLatest(actionTypes.PERSIST_REHYDRATE, setElectronPrefs),
     takeLatest(actionTypes.NEXT_FILE, setNextFile),
+    takeLatest(actionTypes.RANDOM_FILE, randomFile),
   ]);
 }

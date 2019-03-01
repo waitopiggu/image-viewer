@@ -12,6 +12,9 @@ const mapDispatchToProps = dispatch => ({
     type: actionTypes.NEXT_FILE,
     payload: { direction },
   }),
+  randomFile: () => dispatch({
+    type: actionTypes.RANDOM_FILE,
+  }),
   setVideoPrefs: preferences => dispatch({
     type: actionTypes.SET_VIDEO_PREFS,
     payload: { preferences },

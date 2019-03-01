@@ -1,6 +1,10 @@
 import React from 'react';
 import { isEqual } from 'lodash';
+import classNames from 'classnames';
+import { withStyles } from '@material-ui/core/styles';
+import { Grid } from '@material-ui/core';
 import Controls from './Controls';
+import Menu from './Menu';
 
 type Props = {
   classes: any,
@@ -11,9 +15,15 @@ type Props = {
   videoPrefs: any,
 };
 
+type State = {
+  anchorEl: null,
+  videoElement: null,
+};
+
 class Video extends React.Component<Props, State> {
 
   state = {
+    anchorEl: null,
     videoElement: null,
   };
 
@@ -36,8 +46,14 @@ class Video extends React.Component<Props, State> {
   };
 
   handleFileChange = (direction) => () => {
-    const { nextFile } = this.props;
-    nextFile(direction);
+    const { videoPrefs } = this.props;
+    if (videoPrefs.shuffle) {
+      const { randomFile } = this.props;
+      randomFile();
+    } else {
+      const { nextFile } = this.props;
+      nextFile(direction);
+    }
   };
 
   handlePrefsChange = (name, value = 0) => (event, targetValue) => {
@@ -57,6 +73,13 @@ class Video extends React.Component<Props, State> {
   onLoadStart = (event) => {
     const videoElement = event.target;
     this.setState({ videoElement }, this.setElementPrefs);
+  };
+
+  onMenuClose = () => this.setState({ anchorEl: null });
+
+  onMenuOpen = (event) => {
+    const anchorEl = event.currentTarget;
+    this.setState({ anchorEl });
   };
 
   onSeek = (event, value) => {
@@ -81,18 +104,23 @@ class Video extends React.Component<Props, State> {
   };
 
   render() {
-    const { videoElement } = this.state;
+    const { anchorEl, videoElement } = this.state;
     const { classes, contentClass, file, videoPrefs } = this.props;
     return (
-      <React.Fragment>
-        <video
-          className={contentClass}
-          onEnded={this.onEnded}
-          onLoadedMetadata={this.onUpdate}
-          onLoadStart={this.onLoadStart}
-          onTimeUpdate={this.onUpdate}
-          src={file.path}
-        />
+      <div className={contentClass}>
+        <Grid container justify="center" className={classes.videoContainer}>
+          <video
+            className={classNames([
+              classes.video,
+              videoPrefs.fit && classes.videoFit,
+            ])}
+            onEnded={this.onEnded}
+            onLoadedMetadata={this.onUpdate}
+            onLoadStart={this.onLoadStart}
+            onTimeUpdate={this.onUpdate}
+            src={file.path}
+          />
+        </Grid>
         {videoElement && (
           <Controls
             {...videoPrefs}
@@ -100,14 +128,34 @@ class Video extends React.Component<Props, State> {
             duration={videoElement.duration}
             handleFileChange={this.handleFileChange}
             handlePrefsChange={this.handlePrefsChange}
+            onMenuOpen={this.onMenuOpen}
             onSeek={this.onSeek}
             onTogglePlay={this.onTogglePlay}
             paused={videoElement.paused}
           />
         )}
-      </React.Fragment>
+        <Menu
+          {...videoPrefs}
+          anchorEl={anchorEl}
+          handlePrefsChange={this.handlePrefsChange}
+          open={Boolean(anchorEl)}
+          onClose={this.onMenuClose}
+        />
+      </div>
     );
   }
 }
 
-export default Video;
+const styles = theme => ({
+  video: {
+    maxWidth: '100%',
+  },
+  videoFit: {
+    width: '100%',
+  },
+  videoContainer: {
+    height: '100%',
+  },
+});
+
+export default withStyles(styles)(Video);

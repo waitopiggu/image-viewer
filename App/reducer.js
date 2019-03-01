@@ -92,10 +92,12 @@ function imagePrefs(state = imagePrefsInitialState, action) {
 
 const videoPrefsInitialState = {
   autoplay: false,
+  fit: false,
   playbackRate: 1,
   playDir: false,
   loop: false,
   muted: false,
+  shuffle: false,
   volume: 0,
 };
 

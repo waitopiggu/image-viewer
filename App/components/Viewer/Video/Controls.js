@@ -5,11 +5,9 @@ import Slider from '@material-ui/lab/Slider';
 import {
   KeyboardArrowLeft,
   KeyboardArrowRight,
+  MoreVert,
   Pause,
   PlayArrow,
-  PlayCircleFilled,
-  PlayListPlay,
-  Repeat,
   SkipNext,
   SkipPrevious,
   VolumeOff,
@@ -21,35 +19,31 @@ const MAX_PLAYBACK_RATE = 2;
 const MIN_PLAYBACK_RATE = 0.25;
 
 type Props = {
-  autoplay: boolean,
   classes: any,
   currentTime: number,
   duration: number,
   handleFileChange: Function,
   handlePrefsChange: Function,
-  loop: boolean,
   muted: boolean,
+  onMenuClick: Function,
   onTogglePlay: Function,
   onSeek: Function,
   paused: boolean,
-  playDir: boolean,
   playbackRate: number,
   volume: number,
 };
 
 const Controls = ({
-  autoplay,
   classes,
   currentTime,
   duration,
   handleFileChange,
   handlePrefsChange,
-  loop,
   muted,
+  onMenuOpen,
   onTogglePlay,
   onSeek,
   paused,
-  playDir,
   playbackRate,
   volume,
 }: Props) => (
@@ -69,22 +63,8 @@ const Controls = ({
           <Slider max={duration} onChange={onSeek} value={currentTime} />
         </Grid>
         <Grid item xs={3}>
-          <IconButton
-            color={playDir ? 'primary' : 'default'}
-            onClick={handlePrefsChange('playDir', !playDir)}
-          >
-            <PlayListPlay />
-          </IconButton>
-          <IconButton
-            color={autoplay ? 'primary' : 'default'}
-            onClick={handlePrefsChange('autoplay', !autoplay)}
-          >
-            <PlayCircleFilled />
-          </IconButton>
-          <IconButton
-            color={loop ? 'primary' : 'default'}
-            onClick={handlePrefsChange('loop', !loop)}>
-            <Repeat />
+          <IconButton onClick={onMenuOpen}>
+            <MoreVert />
           </IconButton>
         </Grid>
         <Grid container item xs={6} justify="center">
