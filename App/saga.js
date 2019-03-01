@@ -86,13 +86,17 @@ function* setElectronPrefs(action) {
 
 function* randomFile() {
   try {
-    const { files } = yield select(state => state);
-    const index = Math.floor(Math.random() * files.length);
-    const next = files[index];
-    yield put({
-      type: actionTypes.SET_FILE,
-      payload: { file: next },
-    });
+    const { file, files } = yield select(state => state);
+    const nextIndex = Math.floor(Math.random() * files.length);
+    if (nextIndex === file.index) {
+      yield put({ type: actionTypes.RANDOM_FILE });
+    } else {
+      const next = files[nextIndex];
+      yield put({
+        type: actionTypes.SET_FILE,
+        payload: { file: next },
+      });
+    }
   } catch (error) {
     console.error(error);
   }

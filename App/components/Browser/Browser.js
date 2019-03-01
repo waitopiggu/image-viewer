@@ -32,6 +32,14 @@ class Browser extends React.PureComponent<Props> {
     changeDirectory(directory);
   }
 
+  componentDidUpdate(prevProps) {
+    const { fileIndex } = this.props;
+    if (fileIndex >= 0 && fileIndex !== prevProps.fileIndex) {
+      const element = document.getElementById(`browser-list-item-${fileIndex}`);
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
   handleListItemCLick = file => () => {
     if (file.isUp) {
       const { directory, parentDirectory } = this.props;
@@ -79,6 +87,7 @@ class Browser extends React.PureComponent<Props> {
               button
               className={classes.listItem}
               key={file.filename}
+              id={`browser-list-item-${file.index}`}
               onClick={this.handleListItemCLick(file)}
               selected={file.index === fileIndex}
             >
