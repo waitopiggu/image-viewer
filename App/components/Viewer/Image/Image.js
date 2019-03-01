@@ -1,5 +1,4 @@
 import React from 'react';
-import { isEqual } from 'lodash';
 import classNames from 'classnames';
 import { Grid, Toolbar } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
@@ -14,22 +13,33 @@ type Props = {
   setImagePrefs: Function,
 };
 
-class Image extends React.PureComponent<Props> {
+type State = {
+  clientX: number,
+  clientY: number,
+  containerEl: any,
+  grabbed: boolean,
+};
 
-  imgRef = React.createRef();
+class Image extends React.Component<Props, State> {
+
+  state = {
+    clientX: 0,
+    clientY: 0,
+    containerEl: null,
+    grabbed: false,
+  };
 
   componentDidMount() {
-    this.imgRef.current.addEventListener('contextmenu', this.onRightClick);
+    const containerEl = document.getElementById('viewer-image-container');
+    this.setState({ containerEl });
   }
 
-  componentDidUpdate() {
-    const element = document.getElementById('viewer-image-container');
-    element.scrollTop = 0;
-    element.scrollLeft = 0;
-  }
-
-  componentWillUnmount() {
-    this.imgRef.current.removeEventListener('contextmenu', this.onRightClick);
+  componentDidUpdate(prevProps) {
+    if (this.props.file.filename !== prevProps.file.filename) {
+      const { containerEl } = this.state;
+      containerEl.scrollTop = 0;
+      containerEl.scrollLeft = 0;
+    }
   }
 
   handleFileChange = direction => () => {
@@ -42,18 +52,29 @@ class Image extends React.PureComponent<Props> {
     setImagePrefs({ [name]: value });
   };
 
-  onClick = () => {
-    const { nextFile } = this.props;
-    nextFile('next');
+  onMouseDown = (event) => {
+    const { clientX, clientY } = event;
+    this.setState({ clientX, clientY, grabbed: true });
   };
 
-  onRightClick = () => {
-    const { nextFile } = this.props;
-    nextFile('previous');
+  onMouseMove = (event) => {
+    const { containerEl, grabbed } = this.state;
+    if (grabbed) {
+      const { clientX, clientY, containerEl } = this.state;
+      const { clientHeight, clientWidth, scrollTop, scrollLeft } = containerEl;
+      containerEl.scrollTop += (clientY - event.clientY);
+      containerEl.scrollLeft += (clientX - event.clientX);
+      this.setState({ clientX: event.clientX, clientY: event.clientY });
+    }
+  };
+
+  onMouseUp = (event) => {
+    this.setState({ grabbed: false });
   };
 
   render() {
     const { classes, contentClass, file, imagePrefs } = this.props
+    const { grabbed } = this.state;
     const { fit, overflowX } = imagePrefs;
     const fitNone = fit === 'none';
     const fitWidth = fit === 'width';
@@ -69,11 +90,15 @@ class Image extends React.PureComponent<Props> {
           <img
             className={classNames([
               classes.image,
+              grabbed && classes.imageGrabbed,
               fit === 'contain' && classes.fitContain,
               fit === 'width' && classes.fitWidth,
             ])}
-            onClick={this.onClick}
-            ref={this.imgRef}
+            draggable={false}
+            onMouseDown={this.onMouseDown}
+            onMouseLeave={this.onMouseUp}
+            onMouseMove={this.onMouseMove}
+            onMouseUp={this.onMouseUp}
             src={file.path}
           />
         </Grid>
@@ -97,11 +122,18 @@ const styles = theme => ({
     width: '100%',
   },
   image: {
+    cursor: 'grab',
     margin: 'auto',
   },
   imageContainer: {
     height: '100%',
     overflow: 'auto',
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
+  },
+  imageGrabbed: {
+    cursor: 'grabbing',
   },
 });
 

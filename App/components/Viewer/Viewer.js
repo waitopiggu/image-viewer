@@ -34,9 +34,6 @@ const styles = theme => {
     root: {
       flexGrow: 1,
       height: '100vh',
-      '&::-webkit-scrollbar': {
-        display: 'none',
-      },
       overflow: 'hidden',
       padding,
     },
