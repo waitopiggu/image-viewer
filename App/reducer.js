@@ -74,6 +74,22 @@ function files(state = [], action) {
   }
 }
 
+const imagePrefsInitialState = {
+  fit: 'contain',
+};
+
+function imagePrefs(state = imagePrefsInitialState, action) {
+  switch (action.type) {
+    case actionTypes.SET_IMAGE_PREFS: {
+      const { preferences } = action.payload;
+      return { ...state, ...preferences };
+    }
+    default: {
+      return state;
+    }
+  }
+}
+
 const videoPrefsInitialState = {
   autoplay: false,
   playbackRate: 1,
@@ -100,5 +116,6 @@ export default combineReducers({
   electron,
   file,
   files,
+  imagePrefs,
   videoPrefs,
 });

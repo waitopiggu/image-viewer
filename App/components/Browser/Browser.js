@@ -36,24 +36,16 @@ class Browser extends React.PureComponent<Props> {
     if (file.isUp) {
       const { directory, parentDirectory } = this.props;
       parentDirectory(directory);
-      this.scrollTop();
     } else if (file.isRefresh) {
       const { changeDirectory, directory } = this.props;
       changeDirectory(directory);
-      this.scrollTop();
     } else if (file.isDirectory) {
       const { changeDirectory } = this.props;
       changeDirectory(file.path);
-      this.scrollTop();
     } else {
       const { setFile } = this.props;
       setFile(file);
     }
-  };
-
-  scrollTop = () => {
-    const paper = document.getElementById('browser-drawer-paper');
-    paper.scrollTop = 0;
   };
 
   render() {
