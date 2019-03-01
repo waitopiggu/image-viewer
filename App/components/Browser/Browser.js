@@ -53,9 +53,6 @@ class Browser extends React.PureComponent<Props> {
     return (
       <div>
         <Toolbar>
-          <IconButton onClick={this.handleListItemCLick({ isUp: true })}>
-            <ArrowUpward />
-          </IconButton>
           <Typography className={classes.grow}>
             {`${files.length} items`}
           </Typography>
@@ -69,6 +66,14 @@ class Browser extends React.PureComponent<Props> {
           PaperProps={{ id: 'browser-drawer-paper' }}
           variant="permanent"
         >
+          <ListItem
+            button
+            className={classes.listItem}
+            onClick={this.handleListItemCLick({ isUp: true })}
+          >
+            <ListItemIcon><ArrowUpward /></ListItemIcon>
+            <ListItemText>..</ListItemText>
+          </ListItem>
           {files.map(file => (
             <ListItem
               button
