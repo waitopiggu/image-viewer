@@ -45,7 +45,7 @@ class Video extends React.Component<Props, State> {
     this.setState({ videoElement });
   };
 
-  handleFileChange = (direction) => this.onFileChange;
+  handleFileChange = (direction) => () => this.onFileChange(direction);
 
   handlePrefsChange = (name, value = 0) => (event, targetValue) => {
     const { setVideoPrefs } = this.props;
