@@ -68,26 +68,26 @@ const Controls = ({
           </IconButton>
         </Grid>
         <Grid container item xs={6} justify="center">
-          <IconButton onClick={handleFileChange('previous')}>
-            <SkipPrevious />
-          </IconButton>
           <IconButton onClick={handlePrefsChange(
             'playbackRate',
             Math.max(MIN_PLAYBACK_RATE, playbackRate - 0.25),
           )}>
             <KeyboardArrowLeft />
           </IconButton>
+          <IconButton onClick={handleFileChange('previous')}>
+            <SkipPrevious />
+          </IconButton>
           <IconButton onClick={onTogglePlay}>
             {paused ? <PlayArrow /> : <Pause />}
+          </IconButton>
+          <IconButton onClick={handleFileChange('next')}>
+            <SkipNext />
           </IconButton>
           <IconButton onClick={handlePrefsChange(
             'playbackRate',
             Math.min(MAX_PLAYBACK_RATE, playbackRate + 0.25),
           )}>
             <KeyboardArrowRight />
-          </IconButton>
-          <IconButton onClick={handleFileChange('next')}>
-            <SkipNext />
           </IconButton>
         </Grid>
         <Grid container item xs={3} alignItems="center" justify="flex-end">
