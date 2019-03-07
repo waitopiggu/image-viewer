@@ -22,29 +22,24 @@ function* listDirectoryFiles(action) {
   try {
     let dir = yield call(filesystem.readdir, path);
     const visible = dir.filter(file => !(/(^|\/)\.[^\/\.]/g).test(file));
-    if (dir && visible) {
+    if (visible) {
       const files = [];
-      let firstMediaIndex = -1;
       for (let filename of visible) {
         const file = yield call(fileStat, path, filename);
         if (file) {
           const index = files.length;
           files.push({ ...file, index });
-          if (firstMediaIndex < 0 && (file.isImage || file.isVideo)) {
-            firstMediaIndex = index;
-          }
         }
       }
-      yield put({
-        type: actionTypes.SET_FILES,
-        payload: { files },
-      });
-      if (firstMediaIndex >= 0) {
-        yield put({
-          type: actionTypes.SET_FILE,
-          payload: { file: files[firstMediaIndex] },
-        });
-      }
+      yield all([
+        put({
+          type: actionTypes.SET_FILES,
+          payload: { files },
+        }),
+        put({
+          type: actionTypes.FIRST_MEDIA_FILE,
+        }),
+      ]);
     }
   } catch (error) {
     console.error(error);
@@ -56,16 +51,10 @@ function* parentDirectory(action) {
   try {
     const parentPath = yield call(filesystem.parentdir, path);
     if (parentPath) {
-      yield all([
-        put({
-          type: actionTypes.CHANGE_DIRECTORY,
-          payload: { path: parentPath },
-        }),
-        put({
-          type: actionTypes.SET_FILE,
-          payload: { file: {} },
-        }),
-      ]);
+      yield put({
+        type: actionTypes.CHANGE_DIRECTORY,
+        payload: { path: parentPath },
+      });
     }
   } catch (error) {
     console.error(error);
@@ -79,6 +68,23 @@ function* setElectronPrefs(action) {
     currentWindow.setSize(width, height);
     currentWindow.show();
     yield put({ type: actionTypes.SET_WINDOW_SIZE_SUCCESS });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function* firstMediaFile(action) {
+  try {
+    const files = yield select(state => state.files);
+    for (let file of files) {
+      if (file.isImage || file.isVideo) {
+        yield put({
+          type: actionTypes.SET_FILE,
+          payload: { file },
+        });
+        return;
+      }
+    }
   } catch (error) {
     console.error(error);
   }
@@ -123,13 +129,11 @@ function* setNextFile(action) {
 
 export default function* () {
   yield all([
-    takeLatest(
-      actionTypes.CHANGE_DIRECTORY,
-      listDirectoryFiles,
-    ),
+    takeLatest(actionTypes.CHANGE_DIRECTORY, listDirectoryFiles,),
+    takeLatest(actionTypes.FIRST_MEDIA_FILE, firstMediaFile),
+    takeLatest(actionTypes.NEXT_FILE, setNextFile),
     takeLatest(actionTypes.PARENT_DIRECTORY, parentDirectory),
     takeLatest(actionTypes.PERSIST_REHYDRATE, setElectronPrefs),
-    takeLatest(actionTypes.NEXT_FILE, setNextFile),
     takeLatest(actionTypes.RANDOM_FILE, randomFile),
   ]);
 }

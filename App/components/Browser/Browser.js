@@ -36,7 +36,7 @@ class Browser extends React.PureComponent<Props> {
     const { fileIndex } = this.props;
     if (fileIndex >= 0 && fileIndex !== prevProps.fileIndex) {
       const element = document.getElementById(`browser-list-item-${fileIndex}`);
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView(false);
     }
   }
 

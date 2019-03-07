@@ -15,7 +15,7 @@ import {
 } from '@material-ui/icons';
 import { format } from '../../../lib';
 
-const MAX_PLAYBACK_RATE = 2;
+const MAX_PLAYBACK_RATE = 5;
 const MIN_PLAYBACK_RATE = 0.25;
 
 type Props = {
