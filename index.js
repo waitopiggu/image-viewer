@@ -18,8 +18,10 @@ function createWindow() {
     win.webContents.openDevTools();
     const {
       default: installExtension,
+      REACT_DEVELOPER_TOOLS,
       REDUX_DEVTOOLS,
     } = require('electron-devtools-installer');
+    installExtension(REACT_DEVELOPER_TOOLS).then(console.log, console.error);
     installExtension(REDUX_DEVTOOLS).then(console.log, console.error);
   } else {
     win.setMenu(null);
