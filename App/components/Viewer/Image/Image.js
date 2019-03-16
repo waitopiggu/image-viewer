@@ -17,6 +17,7 @@ type State = {
   clientX: number,
   clientY: number,
   containerEl: any,
+  draggable: boolean,
   grabbed: boolean,
 };
 
@@ -26,12 +27,21 @@ class Image extends React.Component<Props, State> {
     clientX: 0,
     clientY: 0,
     containerEl: null,
+    draggable: false,
     grabbed: false,
   };
 
   componentDidMount() {
     const containerEl = document.getElementById('viewer-image-container');
     this.setState({ containerEl });
+    containerEl.addEventListener('contextmenu', this.onRightClick);
+    containerEl.addEventListener('dblclick', this.onDoubleClick);
+  }
+
+  componentWillUnmount() {
+    const { containerEl } = this.state;
+    containerEl.removeEventListener('contextmenu', this.onRightClick);
+    containerEl.removeEventListener('dblclick', this.onDoubleClick);
   }
 
   componentDidUpdate(prevProps) {
@@ -42,14 +52,21 @@ class Image extends React.Component<Props, State> {
     }
   }
 
-  handleFileChange = direction => () => {
-    const { nextFile } = this.props;
-    nextFile(direction);
-  };
+  handleFileChange = direction => () => this.onFileChange(direction);
 
   handlePrefsChange = (name, value) => () => {
     const { setImagePrefs } = this.props;
     setImagePrefs({ [name]: value });
+  };
+
+  onDoubleClick = (event) => {
+    event.preventDefault();
+    this.onFileChange('next');
+  };
+
+  onFileChange = (direction) => {
+    const { nextFile } = this.props;
+    nextFile(direction);
   };
 
   onMouseDown = (event) => {
@@ -70,6 +87,11 @@ class Image extends React.Component<Props, State> {
 
   onMouseUp = (event) => {
     this.setState({ grabbed: false });
+  };
+
+  onRightClick = (event) => {
+    event.preventDefault();
+    this.onFileChange('previous');
   };
 
   render() {

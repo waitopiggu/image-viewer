@@ -12,7 +12,7 @@
     "clean": "rm -rf public/",
     "build": "sh ./scripts/build.sh",
     "webpack-dev": "node node_modules/webpack/bin/webpack --mode=development --watch",
-    "webpack-prod": "node node_modules/webpack/bin/webpack --mode=production"
+    "webpack-prod": "node node_modules/webpack/bin/webpack --mode=production --progress"
   },
   "dependencies": {
     "@material-ui/core": "^3.9.2",

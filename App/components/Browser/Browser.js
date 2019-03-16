@@ -36,7 +36,7 @@ class Browser extends React.PureComponent<Props> {
     const { fileIndex } = this.props;
     if (fileIndex >= 0 && fileIndex !== prevProps.fileIndex) {
       const element = document.getElementById(`browser-list-item-${fileIndex}`);
-      element.scrollIntoView(false);
+      element.scrollIntoViewIfNeeded();
     }
   }
 
@@ -60,8 +60,11 @@ class Browser extends React.PureComponent<Props> {
     const { classes, fileIndex, files } = this.props;
     return (
       <div>
-        <Toolbar>
-          <Typography className={classes.grow}>
+        <Toolbar className={classes.toolbar}>
+          <IconButton onClick={this.handleListItemCLick({ isUp: true })}>
+            <ArrowUpward />
+          </IconButton>
+          <Typography className={classes.filesCount}>
             {`${files.length} items`}
           </Typography>
           <IconButton onClick={this.handleListItemCLick({ isRefresh: true })}>
@@ -74,14 +77,6 @@ class Browser extends React.PureComponent<Props> {
           PaperProps={{ id: 'browser-drawer-paper' }}
           variant="permanent"
         >
-          <ListItem
-            button
-            className={classes.listItem}
-            onClick={this.handleListItemCLick({ isUp: true })}
-          >
-            <ListItemIcon><ArrowUpward /></ListItemIcon>
-            <ListItemText>..</ListItemText>
-          </ListItem>
           {files.map(file => (
             <ListItem
               button
@@ -143,11 +138,14 @@ const styles = theme => {
       whiteSpace: 'nowrap',
       width: 300,
       '&::-webkit-scrollbar': {
-        display: 'none',
+        width: theme.spacing.unit,
+        height: theme.spacing.unit * 4
       },
     },
-    grow: {
+    filesCount: {
       flexGrow: 1,
+      marginLeft: theme.spacing.unit,
+      marginRight: theme.spacing.unit,
     },
     listItem: {
       maxHeight: 56,
@@ -161,6 +159,10 @@ const styles = theme => {
       objectFit: 'contain',
       width: 'inherit',
       height: 'inherit',
+    },
+    toolbar: {
+      paddingLeft: theme.spacing.unit,
+      paddingRight: theme.spacing.unit,
     },
   };
 };

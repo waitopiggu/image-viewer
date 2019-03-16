@@ -6,7 +6,8 @@ delete package.dependencies;
 delete package.devDependencies;
 delete package.scripts;
 
-console.log('writing package.json')
+console.log('writing package.json');
+
 fs.writeFileSync(
   `${outputDir}/package.json`,
   JSON.stringify(package, null, 2),
