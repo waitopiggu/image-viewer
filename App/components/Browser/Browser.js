@@ -9,6 +9,7 @@ import {
   ListItemText,
   ListItemIcon,
   Toolbar,
+  Tooltip,
   Typography,
 } from '@material-ui/core';
 import { ArrowUpward, Folder, InsertDriveFile, Refresh } from '@material-ui/icons';
@@ -78,33 +79,35 @@ class Browser extends React.PureComponent<Props> {
           variant="permanent"
         >
           {files.map(file => (
-            <ListItem
-              button
-              className={classes.listItem}
-              key={file.filename}
-              id={`browser-list-item-${file.index}`}
-              onClick={this.handleListItemCLick(file)}
-              selected={file.index === fileIndex}
-            >
-              {!(file.isImage || file.isVideo) ? (
-                <ListItemIcon>
-                  {file.isDirectory ? <Folder /> : <InsertDriveFile />}
-                </ListItemIcon>
-              ) : (
-                <ListItemAvatar>
-                  <Avatar className={classes.avatar}>
-                    {file.isImage ? (
-                      <img className={classes.media} src={file.path} />
-                    ) : (
-                      <video className={classes.media} src={file.path} />
-                    )}
-                  </Avatar>
-                </ListItemAvatar>
-              )}
-              <ListItemText classes={{ primary: classes.listItemTextPrimary }}>
-                {file.filename}
-              </ListItemText>
-            </ListItem>
+            <Tooltip enterDelay={500} title={file.filename}>
+              <ListItem
+                button
+                className={classes.listItem}
+                key={file.filename}
+                id={`browser-list-item-${file.index}`}
+                onClick={this.handleListItemCLick(file)}
+                selected={file.index === fileIndex}
+              >
+                {!(file.isImage || file.isVideo) ? (
+                  <ListItemIcon>
+                    {file.isDirectory ? <Folder /> : <InsertDriveFile />}
+                  </ListItemIcon>
+                ) : (
+                  <ListItemAvatar>
+                    <Avatar className={classes.avatar}>
+                      {file.isImage ? (
+                        <img className={classes.media} src={file.path} />
+                      ) : (
+                        <video className={classes.media} src={file.path} />
+                      )}
+                    </Avatar>
+                  </ListItemAvatar>
+                )}
+                <ListItemText classes={{ primary: classes.listItemTextPrimary }}>
+                  {file.filename}
+                </ListItemText>
+              </ListItem>
+            </Tooltip>
           ))}
         </Drawer>
       </div>

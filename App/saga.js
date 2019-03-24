@@ -17,6 +17,13 @@ function* fileStat(directory, filename) {
   }
 }
 
+const byFilename = (a, b) => a.filename.localeCompare(b.filename, undefined, {
+  numeric: true,
+  sensitivity: 'base',
+});
+
+const withIndex = (item, index) => ({ ...item, index });
+
 function* listDirectoryFiles(action) {
   const { path } = action.payload;
   try {
@@ -27,14 +34,13 @@ function* listDirectoryFiles(action) {
       for (let filename of visible) {
         const file = yield call(fileStat, path, filename);
         if (file) {
-          const index = files.length;
-          files.push({ ...file, index });
+          files.push({ ...file });
         }
       }
       yield all([
         put({
           type: actionTypes.SET_FILES,
-          payload: { files },
+          payload: { files: files.sort(byFilename).map(withIndex) },
         }),
         put({
           type: actionTypes.FIRST_MEDIA_FILE,
