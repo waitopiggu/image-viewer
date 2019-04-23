@@ -8,6 +8,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  changeDirectory: path => dispatch({
+    type: actionTypes.CHANGE_DIRECTORY,
+    payload: { path },
+  }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppBar);

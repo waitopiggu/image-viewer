@@ -7,14 +7,20 @@ import actionTypes from './action-types';
 
 function* fileStat(directory, filename) {
   const path = `${directory}/${filename}`;
-  const stats = yield call(filesystem.stat, path);
-  const contentType = mime.lookup(filename);
-  const isDirectory = !stats.isFile();
-  const isImage = /image\/*/.test(contentType);
-  const isVideo = /video\/*/.test(contentType);
-  if (isDirectory || isImage || isVideo) {
-    return { filename, isDirectory, isImage, isVideo, path };
+  try {
+    const stats = yield call(filesystem.stat, path);
+    const contentType = mime.lookup(filename);
+    const isDirectory = !stats.isFile();
+    const isImage = /image\/*/.test(contentType);
+    const isVideo = /video\/*/.test(contentType);
+    if (isDirectory || isImage || isVideo) {
+      return { filename, isDirectory, isImage, isVideo, path };
+    }
+  } catch (error) {
+    console.error(error);
+    return null;
   }
+
 }
 
 const byFilename = (a, b) => a.filename.localeCompare(b.filename, undefined, {

@@ -79,11 +79,10 @@ class Browser extends React.PureComponent<Props> {
           variant="permanent"
         >
           {files.map(file => (
-            <Tooltip enterDelay={500} title={file.filename}>
+            <Tooltip enterDelay={500} key={file.filename} title={file.filename}>
               <ListItem
                 button
                 className={classes.listItem}
-                key={file.filename}
                 id={`browser-list-item-${file.index}`}
                 onClick={this.handleListItemCLick(file)}
                 selected={file.index === fileIndex}
