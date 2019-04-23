@@ -13,6 +13,8 @@ PACKAGE_JSON="$WD"/package.json
 if [ ! -d $BUILD_DIR ]; then
   echo copying electron
   cp -Rf  $ELECTRON_DIR $BUILD_DIR
+  echo renaming executable
+mv -f $BUILD_DIR/electron.exe $BUILD_DIR/image-viewer.exe
 fi
 
 echo running webpack
